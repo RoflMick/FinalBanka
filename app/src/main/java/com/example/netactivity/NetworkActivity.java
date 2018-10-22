@@ -29,6 +29,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParserException;
@@ -72,6 +75,8 @@ public class NetworkActivity extends Activity {
     // The BroadcastReceiver that tracks network connectivity changes.
     private NetworkReceiver receiver = new NetworkReceiver();
 
+    ImageView imgFlag;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +85,9 @@ public class NetworkActivity extends Activity {
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkReceiver();
         this.registerReceiver(receiver, filter);
+
+        imgFlag = findViewById(R.id.img);
+//        imgFlag.setImageResource(R.drawable.flag_);
     }
 
     // Refreshes the display if the network connection and the
@@ -208,9 +216,27 @@ public class NetworkActivity extends Activity {
            
           
             lv.setAdapter(adapter);
+            lv.setOnItemClickListener(myListener);
 
         }
     }
+
+    ListView.OnItemClickListener myListener = new ListView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Entry entry = (Entry)adapterView.getItemAtPosition(i);
+            Intent convertActivity = new Intent(getBaseContext(), ConvertActivity.class);
+            Toast.makeText(getApplicationContext(),"getFlagResource = " + entry.getFlagResourceName() + " " + entry.flagID, Toast.LENGTH_SHORT).show();
+            convertActivity.putExtra("zeme", entry.getZeme());
+            convertActivity.putExtra("kod", entry.getKod());
+            convertActivity.putExtra("kurz", entry.getKurz());
+            convertActivity.putExtra("mena", entry.getMena());
+            convertActivity.putExtra("flag", entry.flagID);
+
+            startActivity(convertActivity);
+        }
+    };
 
     // Uploads XML from stackoverflow.com, parses it, and combines it with
     // HTML markup. Returns HTML string.
